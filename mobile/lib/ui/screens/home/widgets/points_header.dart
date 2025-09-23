@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_application_1/state/nav_state.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../state/app_state.dart';
-import '../../../../theme/app_theme.dart';
 import '../../../shared/constant/style_constant.dart';
 
 class PointsHeader extends ConsumerWidget {

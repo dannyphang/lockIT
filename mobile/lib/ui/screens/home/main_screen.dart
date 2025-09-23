@@ -7,9 +7,6 @@ import 'package:flutter_application_1/ui/screens/home/dashboard_screen.dart';
 import 'package:flutter_application_1/ui/screens/task/tasks_screen.dart';
 import 'package:flutter_application_1/ui/screens/home/widgets/nav_bar.dart';
 import 'package:flutter_application_1/ui/screens/home/widgets/nav_model.dart';
-import '../../../theme/app_theme.dart';
-import '../../shared/constant/style_constant.dart';
-import 'widgets/points_chip.dart';
 
 import '../../../state/nav_state.dart'; // <-- add this
 
