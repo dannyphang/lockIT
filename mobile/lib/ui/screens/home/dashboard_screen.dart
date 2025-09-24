@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../../state/app_state.dart';
 import '../../../state/nav_state.dart';
@@ -21,7 +22,10 @@ class DashboardScreen extends ConsumerWidget {
         title: const Text('LockGate'),
         actions: [
           IconButton(
-            icon: const Icon(Icons.rule_folder_outlined),
+            icon: SvgPicture.asset(
+              "lib/assets/icons/plus.svg",
+              color: AppConst.primaryColor,
+            ),
             onPressed: () => Navigator.push(
               context,
               MaterialPageRoute(builder: (_) => const RulesScreen()),
@@ -29,7 +33,7 @@ class DashboardScreen extends ConsumerWidget {
             tooltip: 'Rules',
           ),
           IconButton(
-            icon: const Icon(Icons.settings_outlined),
+            icon: SvgPicture.asset("lib/assets/icons/cog.svg"),
             onPressed: () => Navigator.push(
               context,
               MaterialPageRoute(builder: (_) => const SettingsScreen()),
@@ -58,7 +62,10 @@ class DashboardScreen extends ConsumerWidget {
                       TextButton.icon(
                         onPressed: () =>
                             ref.read(currentTabProvider.notifier).state = 1,
-                        icon: const Icon(Icons.add),
+                        icon: SvgPicture.asset(
+                          "lib/assets/icons/plus.svg",
+                          color: AppConst.primaryColor,
+                        ),
                         label: const Text(
                           'Add',
                           selectionColor: AppConst.primaryColor,
@@ -82,7 +89,7 @@ class DashboardScreen extends ConsumerWidget {
           const SizedBox(height: AppConst.spacing),
           Card(
             child: ListTile(
-              leading: const Icon(Icons.emoji_events_outlined),
+              leading: SvgPicture.asset("lib/assets/icons/database.svg"),
               title: const Text('Earn points'),
               subtitle: const Text('Complete quick tasks to unlock apps'),
               trailing: FilledButton(
@@ -101,7 +108,7 @@ class DashboardScreen extends ConsumerWidget {
           const SizedBox(height: AppConst.spacing),
           Card(
             child: ListTile(
-              leading: const Icon(Icons.timer_outlined),
+              leading: SvgPicture.asset("lib/assets/icons/stopwatch.svg"),
               title: const Text('Start focus session'),
               subtitle: const Text('Block everything except whitelisted apps'),
               trailing: OutlinedButton(

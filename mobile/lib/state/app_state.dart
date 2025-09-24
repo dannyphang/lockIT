@@ -104,3 +104,18 @@ final tasksProvider = StateNotifierProvider<TasksNotifier, List<TaskItem>>((
 ) {
   return TasksNotifier();
 });
+
+// Transactions
+class TransactionsNotifier extends StateNotifier<List<PointTransaction>> {
+  TransactionsNotifier() : super(mockTransactions());
+  void complete(String id) {
+    state = [
+      for (final t in state) t.uid == id ? t.copyWith(completed: true) : t,
+    ];
+  }
+}
+
+final transactionsProvider =
+    StateNotifierProvider<TransactionsNotifier, List<PointTransaction>>((ref) {
+      return TransactionsNotifier();
+    });

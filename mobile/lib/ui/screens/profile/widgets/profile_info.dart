@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/state/nav_state.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import '../../../../state/app_state.dart';
+import '../../../../state/nav_state.dart';
 import '../../../shared/constant/style_constant.dart';
 
 class ProfileInfo extends ConsumerWidget {
@@ -12,14 +13,18 @@ class ProfileInfo extends ConsumerWidget {
     final points = ref.watch(appPrefsProvider).points;
     return Card(
       child: Padding(
-        padding: const EdgeInsets.all(AppConst.spacingS),
+        padding: const EdgeInsets.all(AppConst.spacingL),
         child: Column(
           children: [
             Row(
               children: [
                 CircleAvatar(
                   radius: AppConst.circleSize,
-                  child: Icon(Icons.person_2_rounded, size: 40),
+                  child: SvgPicture.asset(
+                    "lib/assets/icons/user.svg",
+                    width: 40,
+                    height: 40,
+                  ),
                 ),
                 const SizedBox(width: AppConst.spacing),
                 Expanded(
@@ -29,7 +34,7 @@ class ProfileInfo extends ConsumerWidget {
                       Text(
                         'Your Name',
                         style: TextStyle(
-                          fontSize: 16,
+                          fontSize: AppConst.fontH4,
                           fontWeight: FontWeight.w600,
                         ),
                       ),
@@ -41,7 +46,7 @@ class ProfileInfo extends ConsumerWidget {
                 OutlinedButton.icon(
                   onPressed: () =>
                       ref.read(currentTabProvider.notifier).state = 2,
-                  icon: const Icon(Icons.edit_rounded),
+                  icon: SvgPicture.asset("lib/assets/icons/pencil.svg"),
                   label: const Text('Edit'),
                   style: OutlinedButton.styleFrom(
                     shape: RoundedRectangleBorder(
@@ -66,10 +71,9 @@ class ProfileInfo extends ConsumerWidget {
                     children: [
                       Row(
                         children: [
-                          Icon(
-                            Icons.stars,
+                          SvgPicture.asset(
+                            "lib/assets/icons/star.svg",
                             color: AppConst.primaryColor,
-                            size: AppConst.circleSizeS,
                           ),
                           const SizedBox(width: AppConst.spacingS),
                           Text(
@@ -81,7 +85,10 @@ class ProfileInfo extends ConsumerWidget {
                       FilledButton.icon(
                         onPressed: () =>
                             ref.read(currentTabProvider.notifier).state = 2,
-                        icon: const Icon(Icons.add),
+                        icon: SvgPicture.asset(
+                          "lib/assets/icons/plus.svg",
+                          color: AppConst.secondaryTextColor,
+                        ),
                         label: const Text('Earn'),
                         style: OutlinedButton.styleFrom(
                           shape: RoundedRectangleBorder(

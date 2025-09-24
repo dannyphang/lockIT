@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../../shared/constant/style_constant.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import '../constant/style_constant.dart';
 
 class NavBar extends StatelessWidget {
   final int pageIndex;
@@ -20,19 +21,23 @@ class NavBar extends StatelessWidget {
       ),
       child: Row(
         children: [
-          navItem(Icons.home, pageIndex == 0, onTap: () => onTap(0)),
           navItem(
-            Icons.app_registration_rounded,
+            "lib/assets/icons/home.svg",
+            pageIndex == 0,
+            onTap: () => onTap(0),
+          ),
+          navItem(
+            "lib/assets/icons/th-large.svg",
             pageIndex == 1,
             onTap: () => onTap(1),
           ),
           navItem(
-            Icons.emoji_events_rounded,
+            "lib/assets/icons/database.svg",
             pageIndex == 2,
             onTap: () => onTap(2),
           ),
           navItem(
-            Icons.people_alt_rounded,
+            "lib/assets/icons/user.svg",
             pageIndex == 3,
             onTap: () => onTap(3),
           ),
@@ -42,12 +47,12 @@ class NavBar extends StatelessWidget {
   }
 }
 
-Widget navItem(IconData icon, bool selected, {Function()? onTap}) {
+Widget navItem(String svgPath, bool selected, {Function()? onTap}) {
   return Expanded(
     child: InkWell(
       onTap: onTap,
-      child: Icon(
-        icon,
+      child: SvgPicture.asset(
+        svgPath,
         color: selected ? Colors.white : Colors.white.withOpacity(0.4),
       ),
     ),

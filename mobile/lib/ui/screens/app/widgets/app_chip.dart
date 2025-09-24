@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import '../../../../models.dart';
 import '../../../../state/app_state.dart';
+import '../../../shared/constant/style_constant.dart';
 
 class AppChip extends ConsumerWidget {
   final BlockableApp app;
@@ -32,7 +34,10 @@ class AppChip extends ConsumerWidget {
         }
       },
       child: Chip(
-        avatar: const CircleAvatar(child: Icon(Icons.apps_rounded)),
+        avatar: CircleAvatar(
+          radius: AppConst.circleSize,
+          child: SvgPicture.asset("lib/assets/icons/th-large.svg"),
+        ),
         label: Text(app.name + (allowed ? ' (allowed)' : '')),
       ),
     );

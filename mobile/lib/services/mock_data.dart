@@ -60,3 +60,33 @@ List<TaskItem> mockTasks() => [
     type: 'focus',
   ),
 ];
+
+List<PointTransaction> mockTransactions() => [
+  PointTransaction(
+    uid: 'pt1',
+    userUid: 'u1',
+    typeId: 1,
+    title: 'Completed 25 push-ups',
+    amount: 1,
+    source: 'task',
+    createdDate: DateTime.now().subtract(const Duration(days: 1)),
+  ),
+  PointTransaction(
+    uid: 'pt2',
+    userUid: 'u1',
+    typeId: 2,
+    title: 'Instagram',
+    amount: 2,
+    source: null,
+    createdDate: DateTime.now().subtract(const Duration(days: 1)),
+  ),
+  PointTransaction(
+    uid: 'pt3',
+    userUid: 'u1',
+    typeId: 1,
+    title: 'Completed 20 minutes focus',
+    amount: 3,
+    source: 'task',
+    createdDate: DateTime.now().subtract(const Duration(days: 1)),
+  ),
+];

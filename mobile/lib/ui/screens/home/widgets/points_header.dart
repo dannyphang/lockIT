@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/state/nav_state.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import '../../../../state/app_state.dart';
 import '../../../shared/constant/style_constant.dart';
 
@@ -47,7 +48,10 @@ class PointsHeader extends ConsumerWidget {
             const SizedBox(width: AppConst.spacing),
             FilledButton.icon(
               onPressed: () => ref.read(currentTabProvider.notifier).state = 2,
-              icon: const Icon(Icons.add),
+              icon: SvgPicture.asset(
+                "lib/assets/icons/plus.svg",
+                color: AppConst.secondaryTextColor,
+              ),
               label: const Text('Earn'),
               style: OutlinedButton.styleFrom(
                 shape: RoundedRectangleBorder(

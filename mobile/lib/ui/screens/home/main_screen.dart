@@ -5,8 +5,8 @@ import 'package:flutter_application_1/ui/screens/profile/account_screen.dart';
 import 'package:flutter_application_1/ui/screens/app/app_picker_screen.dart';
 import 'package:flutter_application_1/ui/screens/home/dashboard_screen.dart';
 import 'package:flutter_application_1/ui/screens/task/tasks_screen.dart';
-import 'package:flutter_application_1/ui/screens/home/widgets/nav_bar.dart';
-import 'package:flutter_application_1/ui/screens/home/widgets/nav_model.dart';
+import 'package:flutter_application_1/ui/shared/widgets/nav_bar.dart';
+import 'package:flutter_application_1/ui/shared/widgets/nav_model.dart';
 
 import '../../../state/nav_state.dart'; // <-- add this
 

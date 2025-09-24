@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/ui/screens/profile/widgets/profile_info.dart';
+import 'package:flutter_application_1/ui/screens/profile/widgets/recent_activity.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../state/app_state.dart';
+import '../../shared/constant/style_constant.dart';
 
 class AccountScreen extends ConsumerWidget {
   const AccountScreen({super.key});
@@ -13,8 +15,12 @@ class AccountScreen extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(title: const Text('Profile')),
       body: ListView(
-        padding: const EdgeInsets.all(16),
-        children: [const ProfileInfo()],
+        padding: const EdgeInsets.all(AppConst.spacing),
+        children: [
+          const ProfileInfo(),
+          const SizedBox(height: AppConst.spacing),
+          const RecentActivity(),
+        ],
       ),
     );
   }

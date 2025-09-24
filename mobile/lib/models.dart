@@ -27,6 +27,12 @@ class BlockableApp extends BaseDto {
     required this.icon,
     required this.blocked,
     required this.allowedUntil,
+
+    super.statusId,
+    super.createdDate,
+    super.createdBy,
+    super.modifiedDate,
+    super.modifiedBy,
   }) : super();
 
   BlockableApp copyWith({bool? blocked, int? allowedUntil}) => BlockableApp(
@@ -55,6 +61,12 @@ class TaskItem extends BaseDto {
     required this.rewardPoints,
     required this.duration,
     required this.type,
+
+    super.statusId,
+    super.createdDate,
+    super.createdBy,
+    super.modifiedDate,
+    super.modifiedBy,
   });
 
   TaskItem copyWith({bool? completed}) => TaskItem(
@@ -74,7 +86,7 @@ class PointTransaction extends BaseDto {
   final int typeId;
   final String title;
   final int amount;
-  final String source;
+  final String? source;
 
   PointTransaction({
     required this.uid,
@@ -82,8 +94,23 @@ class PointTransaction extends BaseDto {
     required this.typeId,
     required this.title,
     required this.amount,
-    required this.source,
+    this.source,
+
+    super.statusId,
+    super.createdDate,
+    super.createdBy,
+    super.modifiedDate,
+    super.modifiedBy,
   }) : super();
+
+  PointTransaction copyWith({bool? completed}) => PointTransaction(
+    uid: uid,
+    userUid: userUid,
+    typeId: typeId,
+    title: title,
+    amount: amount,
+    source: source,
+  );
 }
 
 class AppPrefs {
