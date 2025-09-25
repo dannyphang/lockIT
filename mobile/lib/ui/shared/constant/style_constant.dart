@@ -30,4 +30,6 @@ class AppConst {
   static const Color primaryTextColor = Color.fromARGB(255, 0, 0, 0);
   static const Color secondaryTextColor = Color.fromARGB(255, 255, 255, 255);
   static const Color disableColor = Color.fromARGB(255, 127, 127, 127);
+
+  static const String defaultAppIcon = "lib/assets/icons/th-large.svg";
 }

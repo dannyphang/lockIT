@@ -6,18 +6,21 @@ import '../models.dart';
 import '../services/mock_data.dart';
 
 /// =======================
-/// App preferences (onboarded + points)
+/// App preferences (onboarding + points)
 /// =======================
 class AppPrefsNotifier extends StateNotifier<AppPrefs> {
   AppPrefsNotifier() : super(const AppPrefs());
 
   void finishOnboarding() => state = state.copyWith(onboarded: true);
-  void setPoints(int v) => state = state.copyWith(points: v);
-  void addPoints(int v) => state = state.copyWith(points: state.points + v);
 
-  bool spendPoints(int v) {
-    if (state.points < v) return false;
-    state = state.copyWith(points: state.points - v);
+  void setPoints(int value) => state = state.copyWith(points: value);
+
+  void addPoints(int delta) =>
+      state = state.copyWith(points: state.points + delta);
+
+  bool spendPoints(int cost) {
+    if (state.points < cost) return false;
+    state = state.copyWith(points: state.points - cost);
     return true;
   }
 }
@@ -31,60 +34,95 @@ final appPrefsProvider = StateNotifierProvider<AppPrefsNotifier, AppPrefs>((
 /// =======================
 /// Apps (blockable apps)
 /// =======================
-class AppsNotifier extends StateNotifier<List<BlockableApp>> {
-  AppsNotifier() : super(mockApps());
-
-  void toggleBlock(String pkg, bool block) {
-    state = [
-      for (final a in state) a.package == pkg ? a.copyWith(blocked: block) : a,
-    ];
-  }
-
-  void allowFor(String pkg, Duration d) {
-    final until = DateTime.now().millisecondsSinceEpoch + d.inMilliseconds;
-    state = [
-      for (final a in state)
-        a.package == pkg ? a.copyWith(allowedUntil: until) : a,
-    ];
-  }
+class AppsNotifier extends StateNotifier<AsyncValue<List<BlockableApp>>> {
+  AppsNotifier() : super(const AsyncValue.loading());
 
   Future<void> loadFromDevice({
     bool includeSystemApps = false,
     bool includeIcons = false,
   }) async {
-    final existingByPkg = {for (final a in state) a.package: a};
+    state = const AsyncValue.loading();
+    try {
+      final raw = await InstalledApps.getInstalledApps(
+        includeSystemApps,
+        includeIcons,
+      );
 
-    final List<AppInfo> raw = await InstalledApps.getInstalledApps(
-      includeSystemApps, // pass false to hide system apps
-      includeIcons,
-    );
+      // 🔎 Configurable banned keywords
+      const bannedKeywords = [
+        // "android", // most core system apps
+        "com.android",
+        "cts", // test/compatibility apps
+        "emulator", // emulator-only services
+        "config", // config packages
+        "rro", // runtime resource overlays
+        "priv", // privileged CTS/system packages
+      ];
 
-    raw.sort(
-      (a, b) => (a.name).toLowerCase().compareTo((b.name).toLowerCase()),
-    );
+      final filtered = raw.where((app) {
+        final pkg = app.packageName.toLowerCase();
+        final name = app.name.trim().toLowerCase();
 
-    final mapped = <BlockableApp>[
-      for (final app in raw)
-        BlockableApp(
-          package: app.packageName,
-          name: app.name,
-          icon:
-              existingByPkg[app.packageName]?.icon ??
-              '../assets/images/app.png',
-          blocked: existingByPkg[app.packageName]?.blocked ?? false,
-          allowedUntil: existingByPkg[app.packageName]?.allowedUntil ?? 0,
-        ),
-    ];
+        // Skip if empty name
+        if (name.isEmpty) return false;
 
-    state = mapped;
+        // Skip if matches banned keywords
+        if (bannedKeywords.any((kw) => pkg.contains(kw))) {
+          return false;
+        }
+
+        return true;
+      }).toList();
+
+      filtered.sort(
+        (a, b) => a.name.toLowerCase().compareTo(b.name.toLowerCase()),
+      );
+
+      final mapped = [
+        for (final app in filtered)
+          BlockableApp(
+            package: app.packageName,
+            name: app.name,
+            icon: 'assets/icons/th-large.png', // default placeholder
+            blocked: false,
+            allowedUntil: 0,
+          ),
+      ];
+
+      state = AsyncValue.data(mapped);
+    } catch (e, st) {
+      state = AsyncValue.error(e, st);
+    }
+  }
+
+  void setBlocked(String pkg, bool blocked) {
+    state.whenData((apps) {
+      final updated = apps
+          .map((a) => a.package == pkg ? a.copyWith(blocked: blocked) : a)
+          .toList();
+      state = AsyncValue.data(updated);
+    });
+  }
+
+  void allowTemporarily(String pkg, Duration duration) {
+    state.whenData((apps) {
+      final until =
+          DateTime.now().millisecondsSinceEpoch + duration.inMilliseconds;
+      final updated = apps
+          .map((a) => a.package == pkg ? a.copyWith(allowedUntil: until) : a)
+          .toList();
+      state = AsyncValue.data(updated);
+    });
   }
 }
 
-final appsProvider = StateNotifierProvider<AppsNotifier, List<BlockableApp>>((
-  ref,
-) {
-  return AppsNotifier();
-});
+final appsProvider =
+    StateNotifierProvider<AppsNotifier, AsyncValue<List<BlockableApp>>>((ref) {
+      final notifier = AppsNotifier();
+      // 🔥 trigger auto-load AFTER provider is created (no freeze)
+      Future.microtask(() => notifier.loadFromDevice(includeSystemApps: false));
+      return notifier;
+    });
 
 /// =======================
 /// Tasks
@@ -105,9 +143,12 @@ final tasksProvider = StateNotifierProvider<TasksNotifier, List<TaskItem>>((
   return TasksNotifier();
 });
 
-// Transactions
+/// =======================
+/// Transactions
+/// =======================
 class TransactionsNotifier extends StateNotifier<List<PointTransaction>> {
   TransactionsNotifier() : super(mockTransactions());
+
   void complete(String id) {
     state = [
       for (final t in state) t.uid == id ? t.copyWith(completed: true) : t,
