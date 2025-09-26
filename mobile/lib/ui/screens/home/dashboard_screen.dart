@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-import '../../../models.dart';
+import '../../../models/models.dart';
 import '../../../state/app_state.dart';
 import '../../../state/nav_state.dart';
 import '../../shared/constant/style_constant.dart';

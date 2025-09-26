@@ -4,6 +4,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import '../../../../state/app_state.dart';
 import '../../../../state/nav_state.dart';
 import '../../../shared/constant/style_constant.dart';
+import '../account_detail_edit.dart';
 
 class ProfileInfo extends ConsumerWidget {
   const ProfileInfo({super.key});
@@ -44,8 +45,10 @@ class ProfileInfo extends ConsumerWidget {
                   ),
                 ),
                 OutlinedButton.icon(
-                  onPressed: () =>
-                      ref.read(currentTabProvider.notifier).state = 2,
+                  onPressed: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => AccountDetail()),
+                  ),
                   icon: SvgPicture.asset("lib/assets/icons/pencil.svg"),
                   label: const Text('Edit'),
                   style: OutlinedButton.styleFrom(

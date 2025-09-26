@@ -4,6 +4,8 @@ class AppConst {
   static const double circleSizeXS = 16;
   static const double circleSizeS = 24;
   static const double circleSize = 30;
+  static const double circleSizeL = 50;
+  static const double circleSizeXL = 100;
 
   static const double rounded = 99;
 

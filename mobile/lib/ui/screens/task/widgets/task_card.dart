@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/ui/shared/widgets/tag.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../../../models.dart';
+import '../../../../models/models.dart';
 import '../../../shared/constant/style_constant.dart';
 
 class TaskCard extends ConsumerWidget {

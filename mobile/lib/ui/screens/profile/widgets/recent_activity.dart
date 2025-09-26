@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/ui/shared/constant/style_constant.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../../../state/app_state.dart';
 import 'recent_tile.dart';
@@ -18,16 +19,32 @@ class RecentActivity extends ConsumerWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              'Recent activity',
-              style: TextStyle(
-                fontSize: AppConst.fontH3,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            Text(
-              'Earning and spending',
-              style: TextStyle(fontSize: AppConst.fontH5),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Recent activity',
+                      style: TextStyle(
+                        fontSize: AppConst.fontH3,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    Text(
+                      'Earning and spending',
+                      style: TextStyle(fontSize: AppConst.fontH5),
+                    ),
+                  ],
+                ),
+                IconButton(
+                  onPressed: () => {
+                    //TODO: Refresh transactions
+                  },
+                  icon: SvgPicture.asset("lib/assets/icons/refresh.svg"),
+                ),
+              ],
             ),
 
             if (transactions.isEmpty)
@@ -47,6 +64,17 @@ class RecentActivity extends ConsumerWidget {
                   return RecentTile(transaction: t);
                 },
               ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                TextButton(
+                  onPressed: () {
+                    //TODO: Navigate to all transactions screen
+                  },
+                  child: const Text('View All'),
+                ),
+              ],
+            ),
           ],
         ),
       ),

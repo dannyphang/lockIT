@@ -1,8 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:installed_apps/installed_apps.dart';
-import 'package:installed_apps/app_info.dart';
 
-import '../models.dart';
+import '../models/models.dart';
 import '../services/mock_data.dart';
 
 /// =======================

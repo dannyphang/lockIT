@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/ui/screens/profile/widgets/account_action.dart';
 import 'package:flutter_application_1/ui/screens/profile/widgets/profile_info.dart';
 import 'package:flutter_application_1/ui/screens/profile/widgets/recent_activity.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -20,6 +21,7 @@ class AccountScreen extends ConsumerWidget {
           const ProfileInfo(),
           const SizedBox(height: AppConst.spacing),
           const RecentActivity(),
+          const AccountAction(),
         ],
       ),
     );
