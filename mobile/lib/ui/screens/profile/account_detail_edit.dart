@@ -23,19 +23,22 @@ class _AccountDetailState extends ConsumerState<AccountDetail> {
   @override
   Widget build(BuildContext context) {
     // ✅ allowed: listen inside build
-    ref.listen<AsyncValue<User?>>(userProvider, (prev, next) {
-      final user = next.valueOrNull;
-      if (user == null) return;
-      if (_prefilled && prev?.valueOrNull?.uid == user.uid) return;
+    ref.listen<AsyncValue<User?>>(
+      userProvider as ProviderListenable<AsyncValue<User?>>,
+      (prev, next) {
+        final user = next.valueOrNull;
+        if (user == null) return;
+        if (_prefilled && prev?.valueOrNull?.uid == user.uid) return;
 
-      controllers.username.text = user.username;
-      controllers.displayName.text = user.displayName;
-      controllers.email.text = user.email;
-      controllers.preferredLanguage ??= 'en';
+        controllers.username.text = user.username;
+        controllers.displayName.text = user.displayName;
+        controllers.email.text = user.email;
+        controllers.preferredLanguage ??= 'en';
 
-      _prefilled = true;
-      // no setState() needed for controller text assignments
-    });
+        _prefilled = true;
+        // no setState() needed for controller text assignments
+      },
+    );
 
     final userAsync = ref.watch(userProvider);
 

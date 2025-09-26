@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:http/http.dart' as http;
 import '../services/api_providers.dart';
 
 /// Holds only the access token in memory (fast lookups).

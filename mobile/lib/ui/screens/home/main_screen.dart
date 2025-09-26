@@ -41,14 +41,15 @@ class _MainScreenState extends ConsumerState<MainScreen> {
     // READ current tab from Riverpod
     final selectedTab = ref.watch(currentTabProvider);
 
-    return WillPopScope(
-      onWillPop: () {
+    return PopScope(
+      canPop: false, // disable auto-pop, so we handle it manually
+      onPopInvokedWithResult: (didPop, result) {
         final nav = items[selectedTab].navKey.currentState;
         if (nav?.canPop() ?? false) {
           nav!.pop();
-          return Future.value(false);
+        } else {
+          // If navigator cannot pop, allow system to handle (e.g. exit app)
         }
-        return Future.value(true);
       },
       child: Scaffold(
         body: IndexedStack(

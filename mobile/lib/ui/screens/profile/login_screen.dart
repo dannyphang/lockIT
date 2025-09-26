@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
 
-import '../../../services/api_providers.dart';
 import '../../../state/user_state.dart';
 import '../../shared/widgets/base_text_input.dart';
 import '../../../environment/environment.dart';
@@ -15,11 +14,14 @@ class AuthApi {
   AuthApi(this.baseUrl);
 
   Future<String> login(String email, String password) async {
+    print('Logging in $email at $baseUrl');
+    print('Password: $password');
     final r = await http.post(
       Uri.parse('$baseUrl/user/login'),
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode({'email': email, 'password': password}),
     );
+
     if (r.statusCode == 200) {
       final data = jsonDecode(r.body) as Map<String, dynamic>;
       return data['token'] as String;
