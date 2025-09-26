@@ -35,7 +35,7 @@ class LockGateApp extends ConsumerWidget {
 
     // Already onboarded → check user auth state.
     final userAsync = ref.watch(userProvider);
-    print(userAsync);
+
     final Widget home = userAsync.when(
       loading: () => const SplashScreen(),
       error: (e, _) => const LoginScreen(), // if loading user fails, show login
