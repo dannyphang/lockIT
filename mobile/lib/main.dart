@@ -1,82 +1,47 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
-import 'state/app_state.dart';
+import 'services/token_storage.dart';
 import 'state/user_state.dart';
-import 'theme/app_theme.dart';
-import 'ui/screens/home/main_screen.dart';
-import 'ui/screens/home/onboarding_screen.dart';
-import 'ui/screens/profile/login_screen.dart';
+import 'ui/auth/auth_gate.dart';
 
 void main() {
-  runApp(const ProviderScope(child: LockGateApp()));
+  runApp(const ProviderScope(child: AppRoot()));
 }
 
-class LockGateApp extends ConsumerWidget {
-  const LockGateApp({super.key});
+class AppRoot extends ConsumerStatefulWidget {
+  const AppRoot({super.key});
+  @override
+  ConsumerState<AppRoot> createState() => _AppRootState();
+}
+
+class _AppRootState extends ConsumerState<AppRoot> {
+  bool _hydrated = false;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final prefs = ref.watch(appPrefsProvider);
-    final onboarded = prefs.onboarded;
-
-    // // If not onboarded, go straight to onboarding.
-    // if (!onboarded) {
-    //   return MaterialApp(
-    //     debugShowCheckedModeBanner: false,
-    //     title: 'LockGate',
-    //     theme: AppTheme.light(),
-    //     // darkTheme: AppTheme.dark(),
-    //     // themeMode: ThemeMode.system,
-    //     home: const OnboardingScreen(),
-    //   );
-    // }
-
-    // Already onboarded → check user auth state.
-    final userAsync = ref.watch(userProvider);
-
-    final Widget home = userAsync.when(
-      loading: () => const SplashScreen(),
-      error: (e, _) => const LoginScreen(), // if loading user fails, show login
-      data: (user) => user == null
-          ? const LoginScreen() // signed out → login
-          : const MainScreen(), // signed in → main
-    );
-
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'LockGate',
-      theme: AppTheme.light(),
-      // darkTheme: AppTheme.dark(),
-      // themeMode: ThemeMode.system,
-      home: home,
-    );
+  void initState() {
+    super.initState();
+    _init();
   }
-}
 
-/// A tiny splash used while providers are loading.
-class SplashScreen extends StatelessWidget {
-  const SplashScreen({super.key});
+  Future<void> _init() async {
+    final stored = await TokenStorage().readAccess();
+    if (mounted) {
+      ref.read(authTokenProvider.notifier).state = stored;
+      // Optional: prefetch user now
+      if (stored != null && stored.isNotEmpty) {
+        await ref.read(userProvider.notifier).fetch();
+      }
+      setState(() => _hydrated = true);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    return Scaffold(
-      body: Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const SizedBox(
-              width: 36,
-              height: 36,
-              child: CircularProgressIndicator(strokeWidth: 3),
-            ),
-            const SizedBox(height: 12),
-            Text('Preparing LockGate…', style: theme.textTheme.bodyMedium),
-          ],
-        ),
-      ),
-    );
+    if (!_hydrated) {
+      return const MaterialApp(
+        home: Scaffold(body: Center(child: CircularProgressIndicator())),
+      );
+    }
+    return const MaterialApp(home: AuthGate());
   }
 }

@@ -1,100 +1,57 @@
-// lib/core/state/user_state.dart
+import 'dart:convert';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../models/user.dart';
-import 'user_http.dart'; // exposes httpUserRepositoryProvider
+import 'package:http/http.dart' as http;
+import '../services/api_providers.dart';
 
-// 1) Interface
-abstract class UserRepository {
-  Future<User> getCurrentUser();
-  Future<User> updateProfile({
-    String? displayName,
-    String? email,
-    String? avatarUrl,
-  });
-  Future<User> setPoints(int points);
-  Future<User> addPoints(int delta);
+/// Holds only the access token in memory (fast lookups).
+final authTokenProvider = StateProvider<String?>((_) => null);
+
+class AppUser {
+  final String id;
+  final String email;
+  final String? name;
+  final String? role;
+
+  AppUser({required this.id, required this.email, this.name, this.role});
+
+  factory AppUser.fromJson(Map<String, dynamic> j) => AppUser(
+    id: j['id']?.toString() ?? j['userId']?.toString() ?? '',
+    email: j['email'] ?? '',
+    name: j['name'],
+    role: j['role'],
+  );
 }
 
-// 2) Repo provider (HTTP repo)
-final userRepositoryProvider = Provider<UserRepository>((ref) {
-  return ref.watch(httpUserRepositoryProvider);
-});
-
-// 3) Notifier (DEFINE IT here or import it)
-class UserNotifier extends StateNotifier<AsyncValue<User?>> {
-  UserNotifier(this._repo) : super(const AsyncValue.loading());
-
-  final UserRepository _repo;
+class UserNotifier extends StateNotifier<AsyncValue<AppUser?>> {
+  final Ref ref;
+  UserNotifier(this.ref) : super(const AsyncValue.data(null));
 
   Future<void> fetch() async {
     state = const AsyncValue.loading();
     try {
-      final user = await _repo.getCurrentUser();
-      state = AsyncValue.data(user);
+      final client = ref.read(httpClientProvider);
+      final base = ref.read(baseUrlProvider);
+      final res = await client.get(Uri.parse('$base/user/me'));
+      if (res.statusCode == 200) {
+        final data = jsonDecode(res.body) as Map<String, dynamic>;
+        state = AsyncValue.data(AppUser.fromJson(data));
+      } else if (res.statusCode == 401) {
+        // token invalid/expired
+        state = const AsyncValue.data(null);
+      } else {
+        state = AsyncValue.error(
+          'Failed: ${res.statusCode}',
+          StackTrace.current,
+        );
+      }
     } catch (e, st) {
       state = AsyncValue.error(e, st);
     }
   }
 
-  Future<void> updateProfile({
-    String? displayName,
-    String? email,
-    String? avatarUrl,
-  }) async {
-    final previous = state;
-    final current = state.value;
-    if (current == null) {
-      await fetch();
-      return;
-    }
-
-    // optimistic
-    final optimistic = current.copyWith(
-      displayName: displayName ?? current.displayName,
-      email: email ?? current.email,
-      avatarUrl: avatarUrl ?? current.avatarUrl,
-      modifiedDate: DateTime.now(),
-    );
-    state = AsyncValue.data(optimistic);
-
-    try {
-      final updated = await _repo.updateProfile(
-        displayName: displayName,
-        email: email,
-        avatarUrl: avatarUrl,
-      );
-      state = AsyncValue.data(updated);
-    } catch (e, st) {
-      state = previous; // rollback
-      state = AsyncValue.error(e, st);
-    }
-  }
-
-  Future<void> setPoints(int points) async {
-    try {
-      final updated = await _repo.setPoints(points);
-      state = AsyncValue.data(updated);
-    } catch (e, st) {
-      state = AsyncValue.error(e, st);
-    }
-  }
-
-  Future<void> addPoints(int delta) async {
-    try {
-      final updated = await _repo.addPoints(delta);
-      state = AsyncValue.data(updated);
-    } catch (e, st) {
-      state = AsyncValue.error(e, st);
-    }
-  }
+  void clear() => state = const AsyncValue.data(null);
 }
 
-// 4) Provider using the notifier type
-final userProvider = StateNotifierProvider<UserNotifier, AsyncValue<User?>>((
-  ref,
-) {
-  final repo = ref.watch(userRepositoryProvider);
-  final notifier = UserNotifier(repo);
-  Future.microtask(() => notifier.fetch());
-  return notifier;
-});
+final userProvider = StateNotifierProvider<UserNotifier, AsyncValue<AppUser?>>(
+  (ref) => UserNotifier(ref),
+);
