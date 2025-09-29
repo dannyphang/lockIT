@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/ui/screens/home/main_screen.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../state/user_state.dart';
+import '../screens/home/main_screen.dart';
 import '../screens/profile/login_screen.dart';
 
 class AuthGate extends ConsumerWidget {

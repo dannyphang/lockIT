@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_svg/flutter_svg.dart'; // if you use SVG assets
+import 'package:flutter_svg/flutter_svg.dart';
 
-import 'package:flutter_application_1/state/app_state.dart';
-import 'package:flutter_application_1/ui/shared/constant/style_constant.dart';
+import '../../../state/app_state.dart';
+import '../../shared/constant/style_constant.dart'; // if you use SVG assets
 
 class AppPickerScreen extends ConsumerWidget {
   const AppPickerScreen({super.key});

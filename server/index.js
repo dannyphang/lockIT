@@ -1,6 +1,7 @@
 //import { createServer } from "http";
 import express from "express";
 import userController from "./controller/user.controller.js";
+import taskController from "./controller/task.controller.js";
 import cors from "cors";
 import { fileURLToPath } from "url";
 import { dirname } from "path";
@@ -39,6 +40,7 @@ app.use(
 );
 
 app.use("/user", userController);
+app.use("/task", taskController);
 
 app.listen(port, () => {
     console.log(`server is running at port: ${port}... (${new Date()})`);

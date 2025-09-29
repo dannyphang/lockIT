@@ -6,14 +6,9 @@ plugins {
 }
 
 android {
-    namespace = "com.example.flutter_application_1"
-
-    // Use ONE of these. Keeping Flutter-managed versions is recommended:
-    compileSdk = 36
+    namespace = "com.example.app_lock"
+    compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
-
-    // If you prefer to hardcode, comment the line above and uncomment below:
-    // compileSdk = 35
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
@@ -25,7 +20,10 @@ android {
     }
 
     defaultConfig {
-        applicationId = "com.example.flutter_application_1"
+        // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
+        applicationId = "com.example.app_lock"
+        // You can update the following values to match your application needs.
+        // For more information, see: https://flutter.dev/to/review-gradle-config.
         minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
@@ -34,7 +32,8 @@ android {
 
     buildTypes {
         release {
-            // TODO: replace with your release signing config for Play builds.
+            // TODO: Add your own signing config for the release build.
+            // Signing with the debug keys for now, so `flutter run --release` works.
             signingConfig = signingConfigs.getByName("debug")
         }
     }
