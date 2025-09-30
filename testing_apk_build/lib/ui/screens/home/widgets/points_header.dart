@@ -50,7 +50,10 @@ class PointsHeader extends ConsumerWidget {
               onPressed: () => ref.read(currentTabProvider.notifier).state = 2,
               icon: SvgPicture.asset(
                 "assets/icons/plus.svg",
-                color: AppConst.secondaryTextColor,
+                colorFilter: ColorFilter.mode(
+                  AppConst.secondaryTextColor,
+                  BlendMode.srcIn,
+                ),
               ),
               label: const Text('Earn'),
               style: OutlinedButton.styleFrom(

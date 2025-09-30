@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../../state/app_state.dart';
+import '../../../state/user_state.dart';
 import '../../shared/constant/style_constant.dart';
 import 'widgets/account_action.dart';
 import 'widgets/profile_info.dart';
@@ -11,16 +11,17 @@ class AccountScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final apps = ref.watch(appsProvider);
+    final user = ref.watch(userProvider).value;
 
     return Scaffold(
       appBar: AppBar(title: const Text('Profile')),
       body: ListView(
         padding: const EdgeInsets.all(AppConst.spacing),
         children: [
-          const ProfileInfo(),
+          ProfileInfo(user),
           const SizedBox(height: AppConst.spacing),
-          const RecentActivity(),
+          RecentActivity(user!.uid),
+          const SizedBox(height: AppConst.spacing),
           const AccountAction(),
         ],
       ),

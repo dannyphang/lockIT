@@ -16,4 +16,18 @@ function getAllTask() {
     });
 }
 
-export { getAllTask };
+function getTaskById(uid) {
+    return new Promise(async (resolve, reject) => {
+        try {
+            const { data, error } = await supabase.from(taskTableName).select("*").eq("uid", uid).single();
+            if (error) {
+                throw error;
+            }
+            resolve(data);
+        } catch (error) {
+            reject(error);
+        }
+    });
+}
+
+export { getAllTask, getTaskById };

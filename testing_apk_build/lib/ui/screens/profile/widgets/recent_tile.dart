@@ -34,30 +34,36 @@ class RecentTile extends ConsumerWidget {
                       : const ColorFilter.mode(Colors.red, BlendMode.srcIn),
                 ),
                 const SizedBox(width: AppConst.spacing),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      transaction.title,
-                      style: const TextStyle(fontSize: AppConst.fontH4),
-                    ),
-                    Text(
-                      DateFormat(
-                        'hh:mm, dd MMM yyyy',
-                      ).format(transaction.createdDate!),
-                      style: const TextStyle(
-                        fontSize: AppConst.fontH5,
-                        color: Colors.grey,
+                transaction.typeId == 1
+                    ? Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            transaction.title ?? '',
+                            style: const TextStyle(fontSize: AppConst.fontH4),
+                          ),
+                          Text(
+                            DateFormat(
+                              'hh:mm, dd MMM yyyy',
+                            ).format(transaction.createdDate!),
+                            style: const TextStyle(
+                              fontSize: AppConst.fontH5,
+                              color: Colors.grey,
+                            ),
+                          ),
+                        ],
+                      )
+                    : Text(
+                        transaction.source ?? '',
+                        style: const TextStyle(fontSize: AppConst.fontH4),
                       ),
-                    ),
-                  ],
-                ),
               ],
             ),
             const SizedBox(width: AppConst.spacing),
             Text(
-              (transaction.typeId == 1 ? '+' : '-') +
-                  transaction.amount.toString(),
+              (transaction.typeId == 1
+                  ? '+ ${transaction.earnedPoint}'
+                  : '- ${transaction.spentPoint}'),
               style: TextStyle(
                 fontSize: AppConst.fontH4,
                 fontWeight: FontWeight.bold,

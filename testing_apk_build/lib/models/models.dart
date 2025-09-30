@@ -85,18 +85,24 @@ class TaskItem extends BaseDto {
 class PointTransaction extends BaseDto {
   final String uid;
   final String userUid;
-  final int typeId;
-  final String title;
-  final int amount;
+  final String? taskUid;
+  final String? title;
+  final String? description;
   final String? source;
+  final int typeId;
+  final int? spentPoint;
+  final int? earnedPoint;
 
   PointTransaction({
     required this.uid,
     required this.userUid,
+    this.taskUid,
     required this.typeId,
-    required this.title,
-    required this.amount,
+    this.spentPoint,
+    this.title,
+    this.description,
     this.source,
+    this.earnedPoint,
 
     super.statusId,
     super.createdDate,
@@ -108,11 +114,40 @@ class PointTransaction extends BaseDto {
   PointTransaction copyWith({bool? completed}) => PointTransaction(
     uid: uid,
     userUid: userUid,
+    taskUid: taskUid,
     typeId: typeId,
+    spentPoint: spentPoint,
+    earnedPoint: earnedPoint,
     title: title,
-    amount: amount,
-    source: source,
+    description: description,
   );
+
+  factory PointTransaction.fromJson(Map<String, dynamic> json) {
+    return PointTransaction(
+      uid: json['uid']?.toString() ?? '',
+      userUid: json['userUid']?.toString() ?? '',
+      taskUid: json['taskUid']?.toString(), // nullable
+      typeId: int.tryParse(json['typeId']?.toString() ?? '') ?? 0,
+      spentPoint: json['spentPoint'] != null
+          ? int.tryParse(json['spentPoint'].toString())
+          : null,
+      earnedPoint: json['earnedPoint'] != null
+          ? int.tryParse(json['earnedPoint'].toString())
+          : null,
+      title: json['title']?.toString(),
+      description: json['description']?.toString(),
+      source: json['source']?.toString(),
+      statusId: int.tryParse(json['statusId']?.toString() ?? ''),
+      createdDate: json['createdDate'] != null
+          ? DateTime.parse(json['createdDate'].toString())
+          : null,
+      createdBy: json['createdBy']?.toString(),
+      modifiedDate: json['modifiedDate'] != null
+          ? DateTime.parse(json['modifiedDate'].toString())
+          : null,
+      modifiedBy: json['modifiedBy']?.toString(),
+    );
+  }
 }
 
 class AppPrefs {

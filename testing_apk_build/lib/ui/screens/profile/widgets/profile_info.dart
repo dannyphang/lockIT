@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import '../../../../state/app_state.dart';
 import '../../../../state/nav_state.dart';
+import '../../../../state/user_state.dart';
 import '../../../shared/constant/style_constant.dart';
 import '../account_detail_edit.dart';
 
 class ProfileInfo extends ConsumerWidget {
-  const ProfileInfo({super.key});
+  final AppUser? user;
+  const ProfileInfo(this.user, {super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final points = ref.watch(appPrefsProvider).points;
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(AppConst.spacingL),
@@ -31,16 +31,16 @@ class ProfileInfo extends ConsumerWidget {
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
-                    children: const [
+                    children: [
                       Text(
-                        'Your Name',
+                        user?.displayName ?? '',
                         style: TextStyle(
                           fontSize: AppConst.fontH4,
                           fontWeight: FontWeight.w600,
                         ),
                       ),
                       SizedBox(height: 4),
-                      Text('email_123@email.com'),
+                      Text(user?.email ?? ''),
                     ],
                   ),
                 ),
@@ -76,11 +76,14 @@ class ProfileInfo extends ConsumerWidget {
                         children: [
                           SvgPicture.asset(
                             "assets/icons/star.svg",
-                            color: AppConst.primaryColor,
+                            colorFilter: ColorFilter.mode(
+                              AppConst.primaryColor,
+                              BlendMode.srcIn,
+                            ),
                           ),
                           const SizedBox(width: AppConst.spacingS),
                           Text(
-                            "$points",
+                            "${user?.scorePoint ?? 0}",
                             style: const TextStyle(fontSize: AppConst.fontH3),
                           ),
                         ],
@@ -90,7 +93,10 @@ class ProfileInfo extends ConsumerWidget {
                             ref.read(currentTabProvider.notifier).state = 2,
                         icon: SvgPicture.asset(
                           "assets/icons/plus.svg",
-                          color: AppConst.secondaryTextColor,
+                          colorFilter: ColorFilter.mode(
+                            AppConst.secondaryTextColor,
+                            BlendMode.srcIn,
+                          ),
                         ),
                         label: const Text('Earn'),
                         style: OutlinedButton.styleFrom(

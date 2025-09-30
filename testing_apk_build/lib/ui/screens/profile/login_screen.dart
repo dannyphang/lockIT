@@ -1,36 +1,14 @@
-// lib/ui/auth/login_screen.dart
-import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:http/http.dart' as http;
 
+import '../../../services/api/auth_api.dart';
 import '../../../state/user_state.dart';
 import '../../shared/widgets/base_text_input.dart';
 import '../../../environment/environment.dart';
 
-/// Simple Auth API for login
-class AuthApi {
-  final String baseUrl;
-  AuthApi(this.baseUrl);
-
-  Future<String> login(String email, String password) async {
-    final r = await http.post(
-      Uri.parse('$baseUrl/user/login'),
-      headers: {'Content-Type': 'application/json'},
-      body: jsonEncode({'email': email, 'password': password}),
-    );
-
-    if (r.statusCode == 200) {
-      final data = jsonDecode(r.body) as Map<String, dynamic>;
-      return data['token'] as String;
-    }
-    throw Exception('Invalid credentials');
-  }
-}
-
+/// Provide AuthApi instance using Riverpod
 final authApiProvider = Provider<AuthApi>((ref) {
-  // ⚠️ Replace with your environment baseUrl
-  return AuthApi(env['base']!);
+  return AuthApi(env['base']!); // make sure env['base'] exists
 });
 
 class LoginScreen extends ConsumerStatefulWidget {
@@ -62,15 +40,16 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     setState(() => _loading = true);
 
     try {
-      // 1. Call API
-      final token = await ref
-          .read(authApiProvider)
-          .login(_email.text.trim(), _password.text);
+      // 1. Get AuthApi instance from provider
+      final authApi = ref.read(authApiProvider);
 
-      // 2. Save token (used by UserRepository)
+      // 2. Call login
+      final token = await authApi.login(_email.text.trim(), _password.text);
+
+      // 3. Save token (used by UserRepository)
       ref.read(authTokenProvider.notifier).state = token;
 
-      // 3. Refresh user state
+      // 4. Refresh user state
       ref.invalidate(userProvider);
       await ref.read(userProvider.notifier).fetch();
 
@@ -79,7 +58,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         context,
       ).showSnackBar(const SnackBar(content: Text('Logged in successfully')));
 
-      // 4. Navigate away (adjust to your routes)
+      // 5. Navigate away
       Navigator.of(context).pop(); // or pushReplacementNamed('/')
     } catch (e) {
       if (!mounted) return;
@@ -128,6 +107,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       isRequired: true,
                       mode: 'email',
                     ),
+
+                    const SizedBox(height: 16),
 
                     // Password
                     TextFormField(

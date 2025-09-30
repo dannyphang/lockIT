@@ -7,11 +7,13 @@ import '../../../shared/constant/style_constant.dart';
 import 'recent_tile.dart';
 
 class RecentActivity extends ConsumerWidget {
-  const RecentActivity({super.key});
+  final String userUid;
+
+  const RecentActivity(this.userUid, {super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final transactions = ref.watch(transactionsProvider);
+    final transactions = ref.watch(transactionsProvider(userUid));
 
     return Card(
       child: Padding(
@@ -40,14 +42,16 @@ class RecentActivity extends ConsumerWidget {
                 ),
                 IconButton(
                   onPressed: () => {
-                    //TODO: Refresh transactions
+                    ref
+                        .read(transactionsProvider(userUid).notifier)
+                        .loadPointTransactions(userUid),
                   },
                   icon: SvgPicture.asset("assets/icons/refresh.svg"),
                 ),
               ],
             ),
 
-            if (transactions.isEmpty)
+            if (!transactions.hasValue)
               const Padding(
                 padding: EdgeInsets.only(top: 12),
                 child: Text('No activity yet.'),
@@ -57,10 +61,10 @@ class RecentActivity extends ConsumerWidget {
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
                 padding: const EdgeInsets.all(AppConst.spacing),
-                itemCount: transactions.length,
+                itemCount: transactions.value!.length,
                 separatorBuilder: (_, __) => const Divider(height: 1),
                 itemBuilder: (_, i) {
-                  final t = transactions[i];
+                  final t = transactions.value![i];
                   return RecentTile(transaction: t);
                 },
               ),

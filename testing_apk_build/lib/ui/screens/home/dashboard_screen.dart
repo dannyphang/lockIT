@@ -29,7 +29,10 @@ class DashboardScreen extends ConsumerWidget {
           IconButton(
             icon: SvgPicture.asset(
               "assets/icons/plus.svg",
-              color: AppConst.primaryColor,
+              colorFilter: ColorFilter.mode(
+                AppConst.primaryColor.withValues(alpha: 0.4),
+                BlendMode.srcIn,
+              ),
             ),
             tooltip: 'Rules',
             onPressed: () => Navigator.push(
@@ -92,7 +95,10 @@ class _BlockedAppsCard extends StatelessWidget {
                       ref.read(currentTabProvider.notifier).state = 1,
                   icon: SvgPicture.asset(
                     "assets/icons/plus.svg",
-                    color: AppConst.primaryColor,
+                    colorFilter: ColorFilter.mode(
+                      AppConst.primaryColor,
+                      BlendMode.srcIn,
+                    ),
                   ),
                   label: const Text('Add'),
                 ),

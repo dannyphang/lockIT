@@ -42,7 +42,7 @@ class AppChip extends ConsumerWidget {
           radius: AppConst.circleSize,
           backgroundColor: allowed
               ? Colors.green
-              : AppConst.primaryColor.withOpacity(0.2),
+              : AppConst.primaryColor.withValues(alpha: 0.2),
           child: SvgPicture.asset(
             AppConst.defaultAppIcon, // centralize path
             colorFilter: const ColorFilter.mode(Colors.white, BlendMode.srcIn),
@@ -56,7 +56,7 @@ class AppChip extends ConsumerWidget {
           ),
         ),
         backgroundColor: allowed
-            ? Colors.green.withOpacity(0.15)
+            ? Colors.green.withValues(alpha: 0.15)
             : Colors.grey[200],
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
       ),

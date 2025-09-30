@@ -4,8 +4,8 @@ import 'package:installed_apps/installed_apps.dart';
 import '../environment/environment.dart';
 import '../models/models.dart';
 import '../models/task.dart';
-import '../services/mock_data.dart';
-import '../services/task_api.dart';
+import '../services/api/user_api.dart';
+import '../services/api/task_api.dart';
 
 /// =======================
 /// App preferences (onboarding + points)
@@ -167,17 +167,48 @@ final tasksProvider =
 /// =======================
 /// Transactions
 /// =======================
-class TransactionsNotifier extends StateNotifier<List<PointTransaction>> {
-  TransactionsNotifier() : super(mockTransactions());
+class TransactionsNotifier
+    extends StateNotifier<AsyncValue<List<PointTransaction>>> {
+  final PointTransactionApi api;
+  final Ref ref;
 
-  void complete(String id) {
-    state = [
-      for (final t in state) t.uid == id ? t.copyWith(completed: true) : t,
-    ];
+  TransactionsNotifier(this.ref, this.api, String userUid)
+    : super(const AsyncValue<List<PointTransaction>>.loading()) {
+    loadPointTransactions(userUid);
+  }
+
+  Future<void> loadPointTransactions(String userUid) async {
+    state = const AsyncValue.loading();
+    try {
+      api
+          .getAllTransactions(userUid)
+          .then((t) => {state = AsyncValue.data(t)})
+          .onError(
+            (error, stackTrace) => {
+              state = AsyncValue.error(error!, stackTrace),
+            },
+          );
+    } catch (e, st) {
+      state = AsyncValue.error(e, st);
+    }
+  }
+
+  void complete(String uid) {
+    state.whenData((transactions) {
+      final updated = [
+        for (final t in transactions) t.uid == uid ? t.copyWith() : t,
+      ];
+      state = AsyncValue.data(updated);
+    });
   }
 }
 
 final transactionsProvider =
-    StateNotifierProvider<TransactionsNotifier, List<PointTransaction>>((ref) {
-      return TransactionsNotifier();
+    StateNotifierProvider.family<
+      TransactionsNotifier,
+      AsyncValue<List<PointTransaction>>,
+      String
+    >((ref, userUid) {
+      final api = PointTransactionApi(env['base']!);
+      return TransactionsNotifier(ref, api, userUid);
     });

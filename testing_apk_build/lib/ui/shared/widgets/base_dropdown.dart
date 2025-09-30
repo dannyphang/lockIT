@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 class BaseDropdown extends StatelessWidget {
   final String label;
   final String? value;
-  final List<String> items; // plain strings
+  final Map<String, String> items; // plain strings
   final ValueChanged<String?> onChanged;
   final bool isRequired;
   final bool disable;
@@ -26,11 +26,12 @@ class BaseDropdown extends StatelessWidget {
         value: value,
         items: items
             .map(
-              (item) => DropdownMenuItem<String>(
-                value: item,
-                child: Text(item.toUpperCase()),
+              (key, val) => MapEntry(
+                key,
+                DropdownMenuItem<String>(value: key, child: Text(val)),
               ),
             )
+            .values
             .toList(),
         onChanged: disable ? null : onChanged, // 👈 disable dropdown
         validator: (val) {

@@ -12,7 +12,7 @@ class AuthClient extends http.BaseClient {
   Future<http.StreamedResponse> send(http.BaseRequest request) async {
     final token = await _getToken();
     if (token != null && token.isNotEmpty) {
-      request.headers['Authorization'] = 'Bearer $token';
+      request.headers['Authorization'] = token;
     }
     request.headers['Content-Type'] = 'application/json';
     return _inner.send(request);
