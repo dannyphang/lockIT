@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -55,7 +56,9 @@ class DashboardScreen extends ConsumerWidget {
         children: [
           const PointsHeader(),
           const SizedBox(height: AppConst.spacing),
-          _BlockedAppsCard(ref: ref, apps: apps.value ?? []),
+          kReleaseMode
+              ? _BlockedAppsCard(ref: ref, apps: apps.value ?? [])
+              : const SizedBox(),
           const SizedBox(height: AppConst.spacing),
           _EarnPointsCard(ref: ref),
           const SizedBox(height: AppConst.spacing),

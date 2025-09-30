@@ -11,13 +11,17 @@ class NavBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 80,
+      height: 70,
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppConst.spacingL,
+        vertical: AppConst.spacingS,
+      ),
       decoration: BoxDecoration(
         color: AppConst.primaryColor,
-        borderRadius: const BorderRadius.only(
-          topLeft: Radius.circular(50),
-          topRight: Radius.circular(50),
-        ),
+        // borderRadius: const BorderRadius.only(
+        //   topLeft: Radius.circular(50),
+        //   topRight: Radius.circular(50),
+        // ),
       ),
       child: Row(
         children: [
@@ -67,6 +71,16 @@ Widget navItem(
               icon: SvgPicture.asset(
                 svgPath,
                 colorFilter: ColorFilter.mode(Colors.white, BlendMode.srcIn),
+              ),
+              style: TextButton.styleFrom(
+                padding: const EdgeInsets.symmetric(vertical: 1, horizontal: 0),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(AppConst.radiusM),
+                ),
+                backgroundColor: AppConst.secondaryTextColor.withValues(
+                  alpha: 0.2,
+                ),
+                foregroundColor: AppConst.secondaryTextColor,
               ),
             )
           : SvgPicture.asset(

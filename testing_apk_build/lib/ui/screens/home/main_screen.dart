@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../state/nav_state.dart';
+import '../../shared/constant/style_constant.dart';
 import '../../shared/widgets/nav_bar.dart';
 import '../../shared/widgets/nav_model.dart';
 import '../app/app_picker_screen.dart';
@@ -51,35 +52,27 @@ class _MainScreenState extends ConsumerState<MainScreen> {
         }
       },
       child: Scaffold(
-        body: IndexedStack(
-          index: selectedTab,
-          children: items.map((page) {
-            return Navigator(
-              key: page.navKey,
-              onGenerateInitialRoutes: (navigator, initialRoute) {
-                return [MaterialPageRoute(builder: (_) => page.page)];
-              },
-            );
-          }).toList(),
+        backgroundColor: AppConst.primaryColor,
+        body: ClipRRect(
+          borderRadius: const BorderRadius.only(
+            bottomLeft: Radius.circular(AppConst.circleSize),
+            bottomRight: Radius.circular(AppConst.circleSize),
+          ),
+          child: Container(
+            color: AppConst.primaryColor, // background color for all screens
+            child: IndexedStack(
+              index: selectedTab,
+              children: items.map((page) {
+                return Navigator(
+                  key: page.navKey,
+                  onGenerateInitialRoutes: (navigator, initialRoute) {
+                    return [MaterialPageRoute(builder: (_) => page.page)];
+                  },
+                );
+              }).toList(),
+            ),
+          ),
         ),
-
-        // floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-        // // If you want display-only, you can drop the FAB wrapper and just use a SizedBox.
-        // floatingActionButton: Container(
-        //   margin: const EdgeInsets.only(top: 10),
-        //   height: 64,
-        //   width: 64,
-        //   child: FloatingActionButton(
-        //     backgroundColor: Colors.white,
-        //     elevation: 0,
-        //     onPressed: () => debugPrint("Points badge pressed"),
-        //     shape: RoundedRectangleBorder(
-        //       side: const BorderSide(width: 3, color: AppConst.primaryColor),
-        //       borderRadius: BorderRadius.circular(AppConst.rounded),
-        //     ),
-        //     child: const Center(child: PointsCircle()),
-        //   ),
-        // ),
         bottomNavigationBar: NavBar(
           pageIndex: selectedTab,
           onTap: (index) {

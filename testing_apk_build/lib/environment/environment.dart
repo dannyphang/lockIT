@@ -1,3 +1,5 @@
+import 'package:flutter/foundation.dart';
+
 const local = {"log": "http://localhost:1114", "base": "http://localhost:1116"};
 const server = {
   "log": "http://localhost:1114",
@@ -7,6 +9,10 @@ const server = {
 const linkServer = false;
 
 final env = {
-  'log': linkServer ? server['log'] : local['log'],
-  'base': linkServer ? server['base'] : local['base'],
+  'log': kReleaseMode || linkServer
+      ? "http://localhost:1114"
+      : "http://localhost:1114",
+  'base': kReleaseMode || linkServer
+      ? "https://mobile-lock-app.vercel.app"
+      : "http://localhost:1116",
 };

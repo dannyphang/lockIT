@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import '../../../../state/app_state.dart';
+import 'package:testing_apk_build/state/user_state.dart';
 import '../../../../state/nav_state.dart';
 import '../../../shared/constant/style_constant.dart';
 
@@ -10,7 +10,7 @@ class PointsHeader extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final points = ref.watch(appPrefsProvider).points;
+    final points = ref.watch(userProvider).value?.scorePoint ?? 0;
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(AppConst.spacing),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:testing_apk_build/state/user_state.dart';
 import '../../../../state/app_state.dart';
 import '../../../../theme/app_theme.dart';
 import '../../../shared/constant/style_constant.dart';
@@ -9,7 +10,7 @@ class PointsCircle extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final points = ref.watch(appPrefsProvider.select((s) => s.points));
+    final points = ref.watch(userProvider).value?.scorePoint ?? 0;
 
     return SizedBox(
       child: DecoratedBox(
