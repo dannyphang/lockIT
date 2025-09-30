@@ -1,6 +1,11 @@
 // auth_api.dart (example)
 import 'dart:convert';
+import 'package:dio/dio.dart';
 import 'package:http/http.dart' as http;
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+
+final dio = Dio();
+final storage = FlutterSecureStorage();
 
 class AuthApi {
   final String baseUrl;
@@ -15,7 +20,10 @@ class AuthApi {
 
     if (r.statusCode == 200) {
       final data = jsonDecode(r.body) as Map<String, dynamic>;
-      return data['data'] as String;
+      final token = data['token'] as String;
+      await storage.write(key: 'jwt', value: token);
+
+      return token;
     }
     throw Exception('Invalid credentials');
   }

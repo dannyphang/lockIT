@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../services/api/auth_api.dart';
+import '../../../services/token_repository.dart';
 import '../../../state/user_state.dart';
 import '../../shared/widgets/base_text_input.dart';
 import '../../../environment/environment.dart';
@@ -45,6 +46,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
       // 2. Call login
       final token = await authApi.login(_email.text.trim(), _password.text);
+
+      await ref.read(tokenStorageProvider).saveAccess(token);
+      ref.read(authTokenProvider.notifier).state = token;
 
       // 3. Save token (used by UserRepository)
       ref.read(authTokenProvider.notifier).state = token;
