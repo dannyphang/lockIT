@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:logger/web.dart';
 
 import '../../services/token_repository.dart';
 import '../../state/user_state.dart';
@@ -11,51 +12,49 @@ class AuthGate extends ConsumerWidget {
 
   final tokenLoaderProvider = FutureProvider<String?>((ref) async {
     final storage = ref.read(tokenStorageProvider);
-    final token = await storage.readAccess();
-
-    // Save it into the in-memory provider too
+    final token = await storage
+        .readAccess(); // Save it into the in-memory provider too
     ref.read(authTokenProvider.notifier).state = token;
     return token;
   });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final tokenLoader = ref.watch(tokenLoaderProvider);
+    // Always keep the current in-memory token
+    final token = ref.watch(authTokenProvider);
 
-    return tokenLoader.when(
-      loading: () =>
-          const Scaffold(body: Center(child: CircularProgressIndicator())),
-      error: (_, __) => const LoginScreen(),
-      data: (token) {
-        final userAsync = ref.watch(userProvider);
-
-        if (token == null || token.isEmpty) {
-          return const LoginScreen();
+    // Load from storage only once at startup
+    ref.listenManual<AsyncValue<String?>>(tokenLoaderProvider, (prev, next) {
+      next.whenData((storedToken) {
+        if (storedToken != null && storedToken.isNotEmpty) {
+          ref.read(authTokenProvider.notifier).state = storedToken;
         }
+      });
+    });
 
-        // If user not loaded, trigger fetch
-        if (userAsync.value == null && userAsync is! AsyncLoading) {
-          Future.microtask(() => ref.read(userProvider.notifier).fetch());
-        }
+    final userAsync = ref.watch(userProvider);
 
-        if (userAsync is AsyncLoading) {
-          return const Scaffold(
-            body: Center(child: CircularProgressIndicator()),
-          );
-        }
-        if (userAsync.hasError) {
-          return const LoginScreen();
-        }
-        final user = userAsync.value;
+    if (token == null || token.isEmpty) {
+      return const LoginScreen();
+    }
 
-        if (user == null) {
-          return const Scaffold(
-            body: Center(child: CircularProgressIndicator()),
-          );
-        }
+    // If user not loaded, trigger fetch
+    if (userAsync.value == null && userAsync is! AsyncLoading) {
+      Future.microtask(() => ref.read(userProvider.notifier).fetch());
+    }
 
-        return const MainScreen();
-      },
-    );
+    if (userAsync is AsyncLoading) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (userAsync.hasError) {
+      return const LoginScreen();
+    }
+    final user = userAsync.value;
+
+    if (user == null) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+
+    return const MainScreen();
   }
 }
