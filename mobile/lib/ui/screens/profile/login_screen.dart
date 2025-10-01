@@ -47,10 +47,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       // 2. Call login
       final token = await authApi.login(_email.text.trim(), _password.text);
 
-      await ref.read(tokenStorageProvider).saveAccess(token);
-      ref.read(authTokenProvider.notifier).state = token;
-
       // 3. Save token (used by UserRepository)
+      await ref.read(tokenStorageProvider).saveAccess(token);
       ref.read(authTokenProvider.notifier).state = token;
 
       // 4. Refresh user state
