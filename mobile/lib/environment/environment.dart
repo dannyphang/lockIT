@@ -6,7 +6,7 @@ const server = {
   "base": "https://mobile-lock-app.vercel.app",
 };
 
-const linkServer = true;
+const linkServer = false;
 
 final env = {
   'log': kReleaseMode || linkServer

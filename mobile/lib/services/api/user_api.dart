@@ -1,6 +1,10 @@
 // lib/core/network/user_api.dart
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
+import 'package:http_parser/http_parser.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:logger/web.dart';
 
 import '../../models/models.dart';
 
@@ -51,7 +55,7 @@ class UserApi {
     String? avatarUrl,
   }) async {
     final r = await http.put(
-      Uri.parse('$baseUrl/user/me'),
+      Uri.parse('$baseUrl/user/auth/me'),
       headers: {'Authorization': token, 'Content-Type': 'application/json'},
       body: jsonEncode({
         if (displayName != null) 'displayName': displayName,
@@ -63,6 +67,76 @@ class UserApi {
       return jsonDecode(r.body) as Map<String, dynamic>;
     }
     throw Exception('Failed to update user');
+  }
+
+  Future<String> uploadAvatar(XFile? imageFile, String token) async {
+    try {
+      var uri = Uri.parse('$baseUrl/user/auth/avatar');
+
+      var request = http.MultipartRequest("POST", uri);
+      request.headers['Authorization'] = token;
+
+      final size = await imageFile?.length();
+      Logger().d({
+        'name': imageFile?.name,
+        'path': imageFile?.path,
+        'size': size,
+        'mime': imageFile?.mimeType,
+      });
+
+      if (imageFile != null) {
+        if (kIsWeb) {
+          // ✅ Web: use fromBytes
+          final bytes = await imageFile.readAsBytes();
+
+          final filename = imageFile.name.isNotEmpty
+              ? imageFile.name
+              : "avatar.png";
+
+          MediaType mediaType;
+          String ext = filename.split('.').last.toLowerCase();
+          if (ext == "jpg" || ext == "jpeg") {
+            mediaType = MediaType('image', 'jpeg');
+          } else if (ext == "png") {
+            mediaType = MediaType('image', 'png');
+          } else {
+            mediaType = MediaType('application', 'octet-stream');
+          }
+
+          request.files.add(
+            http.MultipartFile.fromBytes(
+              "avatar",
+              bytes,
+              filename: filename,
+              contentType: mediaType,
+            ),
+          );
+        } else {
+          // ✅ Mobile/Desktop: use fromPath
+          request.files.add(
+            await http.MultipartFile.fromPath("avatar", imageFile.path),
+          );
+        }
+
+        // Send request
+        var response = await request.send();
+
+        if (response.statusCode == 200) {
+          return response.stream.bytesToString().then((value) {
+            final res = jsonDecode(value);
+            print("✅ Upload successful: $res");
+            return res['data'] as String;
+          });
+        } else {
+          print("❌ Upload failed: ${response.statusCode}");
+        }
+      }
+
+      return '';
+    } catch (e) {
+      print("⚠️ Error uploading: $e");
+      return '';
+    }
   }
 }
 

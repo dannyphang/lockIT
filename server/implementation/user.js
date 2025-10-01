@@ -5,6 +5,8 @@ import * as taskRepo from "../repository/task.repository.js";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import "crypto";
+import * as attachmentImp from "./attachment.js";
+import fs from "fs";
 
 function getUser(uid) {
     return new Promise(async (resolve, reject) => {
@@ -141,4 +143,46 @@ function verifyUser(token) {
     });
 }
 
-export { getUser, login, register, getUserPoints, verifyUser };
+function uploadAvatar(token, file) {
+    return new Promise(async (resolve, reject) => {
+        try {
+            const user = await verifyUser(token);
+            if (!user) {
+                return reject("User not found");
+            }
+
+            const path = `lockIT/avatar/`;
+            const filename = `${path}${user.uid}`;
+
+            const fileBuffer = fs.readFileSync(file.path);
+
+            attachmentImp
+                .uploadFile({ filename, file, fileBuffer })
+                .then((result) => {
+                    resolve(result.downloadUrl);
+                })
+                .catch((error) => {
+                    reject(error);
+                });
+        } catch (error) {
+            reject(error);
+        }
+    });
+}
+
+function updateUser(token, data) {
+    return new Promise(async (resolve, reject) => {
+        try {
+            const user = await verifyUser(token);
+            if (!user) {
+                return reject("User not found");
+            }
+            const updatedUser = await userRepo.updateUser({ uid: user.uid, ...data });
+            resolve(updatedUser);
+        } catch (error) {
+            reject(error);
+        }
+    });
+}
+
+export { getUser, login, register, getUserPoints, verifyUser, uploadAvatar, updateUser };

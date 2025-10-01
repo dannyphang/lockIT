@@ -1,6 +1,7 @@
 import 'package:flutter/widgets.dart';
 
 class AppConst {
+  static const double circleSizeXXS = 14;
   static const double circleSizeXS = 16;
   static const double circleSizeS = 24;
   static const double circleSize = 30;

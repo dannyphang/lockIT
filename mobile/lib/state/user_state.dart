@@ -9,13 +9,13 @@ class AppUser {
   final String uid;
   final String authUid;
   final int id;
-  final String email;
+  String email;
   final String username;
-  final String? displayName;
-  final String? avatarUrl;
-  final int scorePoint;
-  final String local;
-  final String? timeZone;
+  String? displayName;
+  String? avatarUrl;
+  int scorePoint;
+  String local;
+  String? timeZone;
 
   AppUser({
     required this.uid,
