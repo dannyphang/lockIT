@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:logger/logger.dart';
-import 'package:testing_apk_build/ui/shared/widgets/base_dropdown.dart';
 
 import '../../../state/user_state.dart';
 import '../../shared/constant/style_constant.dart';
+import '../../shared/widgets/base_dropdown.dart';
 import '../../shared/widgets/base_text_input.dart';
 
 class AccountDetail extends ConsumerStatefulWidget {

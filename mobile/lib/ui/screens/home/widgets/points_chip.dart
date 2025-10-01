@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:testing_apk_build/state/user_state.dart';
+import '../../../../state/user_state.dart';
 import '../../../../theme/app_theme.dart';
 import '../../../shared/constant/style_constant.dart';
 
