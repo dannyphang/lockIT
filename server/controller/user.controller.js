@@ -13,9 +13,9 @@ const logModule = "user";
 
 // Configure storage
 const storage = multer.diskStorage({
-    destination: (req, file, cb) => {
-        cb(null, "uploads/avatars"); // folder where you want to save
-    },
+    // destination: (req, file, cb) => {
+    //     cb(null, "uploads/avatars"); // folder where you want to save
+    // },
     filename: (req, file, cb) => {
         // Example: userId + timestamp + extension
         const ext = path.extname(file.originalname);
