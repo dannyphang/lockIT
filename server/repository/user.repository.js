@@ -85,4 +85,19 @@ function getUserByAuthId(uid) {
     });
 }
 
-export { getUserById, getUserByEmail, createUser, getUserPoints, getUserByAuthId };
+function updateUser(data) {
+    return new Promise(async (resolve, reject) => {
+        try {
+            const { data: updatedData, error } = await supabase.from(userTableName).update(data).eq("uid", data.uid).select().single();
+            if (error) {
+                reject(error);
+            } else {
+                resolve(updatedData);
+            }
+        } catch (error) {
+            reject(error);
+        }
+    });
+}
+
+export { getUserById, getUserByEmail, createUser, getUserPoints, getUserByAuthId, updateUser };
