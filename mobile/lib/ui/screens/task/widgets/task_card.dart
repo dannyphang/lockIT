@@ -1,15 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../../../models/task.dart';
-import '../../../shared/constant/style_constant.dart';
-import '../../../shared/widgets/tag.dart';
+import 'package:lock_it/environment/environment.dart';
+import 'package:lock_it/models/task.dart';
+import 'package:lock_it/services/api/task_api.dart';
+import 'package:lock_it/state/user_state.dart';
+import 'package:lock_it/ui/shared/constant/style_constant.dart';
+import 'package:lock_it/ui/shared/widgets/tag.dart';
+import 'package:logger/web.dart';
 
 class TaskCard extends ConsumerWidget {
   final Task? task;
-  const TaskCard({super.key, required this.task});
+  TaskCard({super.key, required this.task});
+
+  final taskApiProvider = Provider<TaskApi>((ref) {
+    return TaskApi(env['base']!); // make sure env['base'] exists
+  });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final token = ref.watch(authTokenProvider);
+
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(AppConst.spacingL),
@@ -34,9 +44,16 @@ class TaskCard extends ConsumerWidget {
             Row(
               children: [
                 ElevatedButton.icon(
-                  onPressed: () => {},
+                  onPressed: () => {
+                    if (task != null && token != null)
+                      {
+                        Logger().d(token),
+                        Logger().d(task?.uid),
+                        ref.read(taskApiProvider).completedTask(task!, token),
+                      },
+                  },
                   icon: const Icon(Icons.check_circle_outline),
-                  label: Text('???'),
+                  label: Text('Complete'),
                 ),
                 const SizedBox(width: AppConst.spacing),
                 OutlinedButton.icon(

@@ -23,4 +23,38 @@ class TaskApi {
 
     throw Exception('Failed to load tasks: ${r.body}');
   }
+
+  Future<List<Task>> completedTask(Task task, String token) async {
+    final r = await http.post(
+      Uri.parse('$baseUrl/task/complete'),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({'task': task, 'token': token}),
+    );
+
+    if (r.statusCode == 200) {
+      final data = jsonDecode(r.body);
+
+      final list = (data['data'] as List<dynamic>);
+      return list.map((e) => Task.fromJson(e as Map<String, dynamic>)).toList();
+    }
+
+    throw Exception('Failed to load tasks: ${r.body}');
+  }
+
+  Future<List<Task>> selectTask(Task task, String token) async {
+    final r = await http.post(
+      Uri.parse('$baseUrl/task/selectTask'),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({'taskUid': task.uid, 'token': token}),
+    );
+
+    if (r.statusCode == 200) {
+      final data = jsonDecode(r.body);
+
+      final list = (data['data'] as List<dynamic>);
+      return list.map((e) => Task.fromJson(e as Map<String, dynamic>)).toList();
+    }
+
+    throw Exception('Failed to load tasks: ${r.body}');
+  }
 }

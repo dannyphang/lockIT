@@ -17,9 +17,14 @@ class RecentActivity extends ConsumerWidget {
 
     return Card(
       child: Padding(
-        padding: const EdgeInsets.all(AppConst.spacingL),
+        padding: const EdgeInsets.only(
+          top: AppConst.spacingL,
+          left: AppConst.spacingL,
+          right: AppConst.spacingL,
+          bottom: AppConst.spacingXS,
+        ),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -68,16 +73,11 @@ class RecentActivity extends ConsumerWidget {
                   return RecentTile(transaction: t);
                 },
               ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                TextButton(
-                  onPressed: () {
-                    //TODO: Navigate to all transactions screen
-                  },
-                  child: const Text('View All'),
-                ),
-              ],
+            TextButton(
+              onPressed: () {
+                //TODO: Navigate to all transactions screen
+              },
+              child: const Text('View All'),
             ),
           ],
         ),
