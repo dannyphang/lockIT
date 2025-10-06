@@ -9,15 +9,45 @@ class TasksScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final tasks = ref.watch(tasksProvider);
+    final tasksAsync = ref.watch(tasksProvider);
 
     return Scaffold(
       appBar: AppBar(title: const Text('Earn points')),
-      body: ListView.separated(
-        padding: const EdgeInsets.all(AppConst.spacing),
-        itemCount: tasks.value?.length ?? 0,
-        separatorBuilder: (_, __) => const SizedBox(height: AppConst.spacing),
-        itemBuilder: (_, i) => TaskCard(task: tasks.value?[i]),
+      body: tasksAsync.when(
+        loading: () => const Center(child: CircularProgressIndicator()),
+        error: (err, _) => Center(
+          child: Padding(
+            padding: const EdgeInsets.all(AppConst.spacing),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text('Failed to load apps:\n$err', textAlign: TextAlign.center),
+                const SizedBox(height: AppConst.spacing),
+                FilledButton(
+                  onPressed: () => ref.read(tasksProvider.notifier).loadTasks(),
+                  child: const Text('Retry'),
+                ),
+              ],
+            ),
+          ),
+        ),
+        data: (tasks) {
+          if (tasks.isEmpty) {
+            return const Center(child: Text('No tasks available.'));
+          }
+          return RefreshIndicator(
+            onRefresh: () async {
+              await ref.read(tasksProvider.notifier).loadTasks();
+            },
+            child: ListView.separated(
+              padding: const EdgeInsets.all(AppConst.spacing),
+              itemCount: tasks.length,
+              separatorBuilder: (_, __) =>
+                  const SizedBox(height: AppConst.spacing),
+              itemBuilder: (_, i) => TaskCard(task: tasks[i]),
+            ),
+          );
+        },
       ),
     );
   }

@@ -101,10 +101,10 @@ function register(userData) {
     });
 }
 
-function getUserPoints(uid) {
+function getUserPoints(uid, pageSize) {
     return new Promise(async (resolve, reject) => {
         try {
-            const pointsList = await userRepo.getUserPoints(uid);
+            const pointsList = await userRepo.getUserPoints(uid, pageSize);
 
             const taskPoints = await Promise.all(
                 pointsList.map(async (point) => {

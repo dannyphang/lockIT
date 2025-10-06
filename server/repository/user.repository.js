@@ -52,10 +52,10 @@ function createUser(user) {
     });
 }
 
-function getUserPoints(uid) {
+function getUserPoints(uid, pageSize) {
     return new Promise(async (resolve, reject) => {
         try {
-            const { data, error } = await supabase.from(pointTrasactionTableName).select("*").eq("userUid", uid).order("createdDate", { ascending: false });
+            const { data, error } = await supabase.from(pointTrasactionTableName).select("*").eq("userUid", uid).order("createdDate", { ascending: false }).limit(pageSize);
 
             if (error) {
                 reject(error);
@@ -90,6 +90,7 @@ function updateUser(data) {
         try {
             const { data: updatedData, error } = await supabase.from(userTableName).update(data).eq("uid", data.uid).select().single();
             if (error) {
+                console.log(error);
                 reject(error);
             } else {
                 resolve(updatedData);
