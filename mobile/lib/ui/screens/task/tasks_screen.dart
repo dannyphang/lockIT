@@ -24,9 +24,7 @@ class TasksScreen extends ConsumerWidget {
                 Text('Failed to load apps:\n$err', textAlign: TextAlign.center),
                 const SizedBox(height: AppConst.spacing),
                 FilledButton(
-                  onPressed: () => ref
-                      .read(appsProvider.notifier)
-                      .loadFromDevice(includeSystemApps: false),
+                  onPressed: () => ref.read(tasksProvider.notifier).loadTasks(),
                   child: const Text('Retry'),
                 ),
               ],

@@ -49,7 +49,7 @@ class RecentActivity extends ConsumerWidget {
                   onPressed: () => {
                     ref
                         .read(transactionsProvider(userUid).notifier)
-                        .loadPointTransactions(userUid),
+                        .loadPointTransactions(userUid, 5),
                   },
                   icon: SvgPicture.asset("assets/icons/refresh.svg"),
                 ),

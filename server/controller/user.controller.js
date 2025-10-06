@@ -114,8 +114,10 @@ router.post("/login", async (req, res) => {
 router.get("/userPoints/:uid", async (req, res) => {
     try {
         const uid = req.params.uid;
+        const pageSize = parseInt(func.body(req).headers.pagesize);
+
         userImp
-            .getUserPoints(uid)
+            .getUserPoints(uid, pageSize)
             .then((list) => {
                 res.status(200).json(func.responseModel({ data: list }));
             })

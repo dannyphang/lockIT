@@ -11,6 +11,7 @@ class Task extends BaseDto {
   final int rewardPoints;
   final String type;
   final int? duration;
+  final TaskProgress? taskProgress;
 
   Task({
     required this.uid,
@@ -20,6 +21,7 @@ class Task extends BaseDto {
     required this.rewardPoints,
     required this.type,
     this.duration,
+    this.taskProgress,
     super.statusId,
     super.createdDate,
     super.createdBy,
@@ -35,6 +37,7 @@ class Task extends BaseDto {
     int? rewardPoints,
     String? type,
     int? duration,
+    TaskProgress? taskProgress,
     int? statusId,
     DateTime? createdDate,
     String? createdBy,
@@ -49,6 +52,7 @@ class Task extends BaseDto {
       rewardPoints: rewardPoints ?? this.rewardPoints,
       type: type ?? this.type,
       duration: duration ?? this.duration,
+      taskProgress: taskProgress ?? this.taskProgress,
       statusId: statusId ?? this.statusId,
       createdDate: createdDate ?? this.createdDate,
       createdBy: createdBy ?? this.createdBy,
@@ -80,6 +84,9 @@ class Task extends BaseDto {
           ? DateTime.parse(json['modifiedDate'] as String)
           : null,
       modifiedBy: json['modifiedBy'] as String?,
+      taskProgress: json['taskProgress'] != null
+          ? TaskProgress.fromJson(json['taskProgress'] as Map<String, dynamic>)
+          : null,
     );
   }
 
@@ -92,11 +99,58 @@ class Task extends BaseDto {
       'rewardPoints': rewardPoints,
       'type': type,
       'duration': duration,
+      'taskProgress': taskProgress?.toJson(),
       'statusId': statusId,
       'createdDate': createdDate?.toIso8601String(),
       'createdBy': createdBy,
       'modifiedDate': modifiedDate?.toIso8601String(),
       'modifiedBy': modifiedBy,
+    };
+  }
+}
+
+class TaskProgress {
+  final String uid;
+  final int taskStatusId;
+  final String taskUid;
+  final String userUid;
+  final DateTime startedDate;
+  final DateTime? completedDate;
+  final int statusId;
+
+  TaskProgress({
+    required this.uid,
+    required this.taskStatusId,
+    required this.taskUid,
+    required this.userUid,
+    this.completedDate,
+    required this.startedDate,
+    required this.statusId,
+  });
+
+  factory TaskProgress.fromJson(Map<String, dynamic> json) {
+    return TaskProgress(
+      uid: json['uid'] as String,
+      taskStatusId: json['taskStatusId'] as int,
+      taskUid: json['taskUid'] as String,
+      userUid: json['userUid'] as String,
+      startedDate: DateTime.parse(json['startedDate'] as String),
+      completedDate: json['completedDate'] != null
+          ? DateTime.parse(json['completedDate'] as String)
+          : null,
+      statusId: json['statusId'] as int,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'uid': uid,
+      'taskStatusId': taskStatusId,
+      'taskUid': taskUid,
+      'userUid': userUid,
+      'startedDate': startedDate.toIso8601String(),
+      'completedDate': completedDate?.toIso8601String(),
+      'statusId': statusId,
     };
   }
 }

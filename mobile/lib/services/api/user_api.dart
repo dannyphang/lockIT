@@ -144,10 +144,16 @@ class PointTransactionApi {
   final String baseUrl;
   PointTransactionApi(this.baseUrl);
 
-  Future<List<PointTransaction>> getAllTransactions(String userUid) async {
+  Future<List<PointTransaction>> getAllTransactions(
+    String userUid,
+    int? pageSize,
+  ) async {
     final r = await http.get(
       Uri.parse('$baseUrl/user/userPoints/$userUid'),
-      headers: {'Content-Type': 'application/json'},
+      headers: {
+        'Content-Type': 'application/json',
+        'pagesize': pageSize?.toString() ?? '99999',
+      },
     );
 
     if (r.statusCode == 200) {

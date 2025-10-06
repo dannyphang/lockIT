@@ -6,6 +6,7 @@ import '../models/models.dart';
 import '../models/task.dart';
 import '../services/api/user_api.dart';
 import '../services/api/task_api.dart';
+import 'user_state.dart';
 
 /// =======================
 /// App preferences (onboarding + points)
@@ -129,9 +130,6 @@ final appsProvider =
 /// =======================
 /// Tasks
 /// =======================
-/// =======================
-/// Tasks (API-backed)
-/// =======================
 class TasksNotifier extends StateNotifier<AsyncValue<List<Task>>> {
   final TaskApi api;
   final Ref ref;
@@ -142,8 +140,9 @@ class TasksNotifier extends StateNotifier<AsyncValue<List<Task>>> {
 
   Future<void> loadTasks() async {
     state = const AsyncValue.loading();
+    final String token = ref.read(authTokenProvider.notifier).state ?? '';
     try {
-      final tasks = await api.getAllTasks();
+      final tasks = await api.getAllTasks(token);
       state = AsyncValue.data(tasks);
     } catch (e, st) {
       state = AsyncValue.error(e, st);
@@ -172,16 +171,16 @@ class TransactionsNotifier
   final PointTransactionApi api;
   final Ref ref;
 
-  TransactionsNotifier(this.ref, this.api, String userUid)
+  TransactionsNotifier(this.ref, this.api, String userUid, int? pageSize)
     : super(const AsyncValue<List<PointTransaction>>.loading()) {
-    loadPointTransactions(userUid);
+    loadPointTransactions(userUid, pageSize);
   }
 
-  Future<void> loadPointTransactions(String userUid) async {
+  Future<void> loadPointTransactions(String userUid, int? pageSize) async {
     state = const AsyncValue.loading();
     try {
       api
-          .getAllTransactions(userUid)
+          .getAllTransactions(userUid, pageSize)
           .then((t) => {state = AsyncValue.data(t)})
           .onError(
             (error, stackTrace) => {
@@ -210,5 +209,5 @@ final transactionsProvider =
       String
     >((ref, userUid) {
       final api = PointTransactionApi(env['base']!);
-      return TransactionsNotifier(ref, api, userUid);
+      return TransactionsNotifier(ref, api, userUid, null);
     });
