@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -22,10 +24,18 @@ class DashboardScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final apps = ref.watch(appsProvider);
+    bool isAndroid = false;
+    bool isIOS = false;
+
+    if (Platform.isAndroid) {
+      isAndroid = true;
+    } else if (Platform.isIOS) {
+      isIOS = true;
+    }
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('LockGate'),
+        title: const Text('LockIt'),
         actions: [
           IconButton(
             icon: SvgPicture.asset(
